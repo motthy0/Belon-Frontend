@@ -1,7 +1,10 @@
 <template>
     <q-page>
-      <p>Siroh</p>
-<SongSection/>
+      <q-header elevated class="bg-teal">
+      <q-toolbar>
+        <q-toolbar-title>Siroh</q-toolbar-title>
+      </q-toolbar>
+    </q-header><SongSection/>
     </q-page>
   </template>
   

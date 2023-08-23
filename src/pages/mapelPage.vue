@@ -51,14 +51,14 @@
     />
     <q-btn
       to="/hadist"
-      :style="{ backgroundImage: 'url(../../public/pic/1.jpg)' }"
+      :style="{ backgroundImage: 'url(../../public/pic/cek.jpg)' }"
       text-color="black" 
       label="Hafalan Hadist"
       class="full-width"
     />
     <q-btn
       to="/arab"
-      :style="{ backgroundImage: 'url(../../public/pic/cek.jpg)' }"
+      :style="{ backgroundImage: 'url(../../public/pic/1.jpg)' }"
       text-color="black" 
       label="Bahasa Arab"
       class="full-width"
