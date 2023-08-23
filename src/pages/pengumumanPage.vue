@@ -1,4 +1,9 @@
 <template>
+      <q-header elevated class="bg-teal">
+      <q-toolbar>
+        <q-toolbar-title>Pengumuman</q-toolbar-title>
+      </q-toolbar>
+    </q-header>
   <div>
     <q-alert
       color="blue"

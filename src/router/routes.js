@@ -7,7 +7,19 @@ const routes = [
     children: [
       {
          path: "/home",
+         component: () => import("pages/HomePage.vue")
+      },
+      {
+         path: "/profile",
          component: () => import("pages/profileSection.vue")
+      },
+      {
+         path: "/mapel",
+         component: () => import("pages/mapelPage.vue")
+      },
+      {
+         path: "/pengumuman",
+         component: () => import("pages/pengumumanPage.vue")
       },
 
       //mapel
@@ -45,6 +57,10 @@ const routes = [
       },
       //mapel
 
+      {
+         path: "/menu",
+         component: () => import("pages/account/AccountMenu.vue")
+      },
       {
          path: "/Alert",
          component: () => import("pages/pengumumanPage.vue")

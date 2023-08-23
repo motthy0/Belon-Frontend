@@ -1,18 +1,34 @@
 <template>
-  <q-page class="q-pa-md">
+        <q-header elevated class="bg-teal">
+      <q-toolbar>
+        <q-toolbar-title>Profile</q-toolbar-title>
+      </q-toolbar>
+    </q-header>
+  <q-page class="q-pa-md full-background">
     <div class="q-gutter-md q-flex">
       <div class="q-col-6 q-flex q-justify-end">
-        <img
-          class="q-mb-md rounded-lg"
-          :src="profilePicture"
-          alt="Profile Picture"
-        />
-        <input
-          type="file"
-          accept="image/*"
-          @change="updateProfilePicture"
-          v-if="isEditMode"
-        />
+        <div class="profile-picture-container">
+          <img
+            class="q-mb-md rounded-lg profile-picture"
+            :src="profilePicture"
+            alt="Profile Picture"
+          />
+          <input
+            type="file"
+            accept="image/*"
+            @change="updateProfilePicture"
+            v-if="isEditMode"
+            class="file-input"
+            id="profilePictureInput"
+          />
+          <label
+            for="profilePictureInput"
+            v-if="isEditMode"
+            class="file-input-label"
+          >
+            Change Photo
+          </label>
+        </div>
       </div>
       <div class="q-col-6 q-flex q-flex-column q-justify-between">
         <div class="q-mb-md">
@@ -48,9 +64,37 @@
               v-model="location"
               label="Location"
             />
-            <!-- Tambahkan data diri lainnya di sini -->
           </div>
         </div>
+        
+      <q-list class="q-mx-md">
+        <q-item clickable v-ripple>
+          <q-item-section avatar>
+            <q-avatar rounded color="primary" text-color="white" icon="account_box"/>
+          </q-item-section>
+
+          <q-item-section class="text-size">My Details</q-item-section>
+
+          <q-item-section side>
+            <q-icon name="arrow_right" size="35px"/>
+          </q-item-section>
+        </q-item>
+    </q-list>
+
+      <q-list class="q-mx-md">
+        <q-item clickable v-ripple>
+          <q-item-section avatar>
+            <q-avatar rounded color="red" text-color="white" icon="logout"/>
+          </q-item-section>
+
+          <q-item-section class="text-size">Logout</q-item-section>
+
+          <q-item-section side>
+            <q-icon name="arrow_right" size="35px"/>
+          </q-item-section>
+        </q-item>
+    </q-list>
+
       </div>
     </div>
   </q-page>
@@ -101,3 +145,51 @@ const toggleEditMode = () => {
   }
 };
 </script>
+
+
+<style lang="scss" scoped>
+
+body{
+  margin:0;
+  padding:0;
+}
+.full-background {
+  background-image: url(../../public/pic/home.jpg);
+  background-size: cover; 
+  background-position: center; 
+}
+.profile-picture-container {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+}
+
+.profile-picture {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.file-input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.file-input-label {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+}
+</style>
