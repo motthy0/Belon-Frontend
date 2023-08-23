@@ -4,9 +4,9 @@
         <q-toolbar-title>Profile</q-toolbar-title>
       </q-toolbar>
     </q-header>
-  <q-page class="q-pa-md full-background">
-    <div class="q-gutter-md q-flex">
-      <div class="q-col-6 q-flex q-justify-end">
+    <q-page class="q-pa-md full-background">
+      <div class="profile-section">
+        <div class="q-gutter-md q-flex">
         <div class="profile-picture-container">
           <img
             class="q-mb-md rounded-lg profile-picture"
@@ -191,5 +191,12 @@ body{
   border-radius: 3px;
   font-size: 12px;
   cursor: pointer;
+}
+
+.profile-section {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
 }
 </style>
