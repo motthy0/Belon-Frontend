@@ -4,7 +4,8 @@
       <q-toolbar>
         <q-toolbar-title>Adab dan Akhlak</q-toolbar-title>
       </q-toolbar>
-    </q-header><SongSection/>
+    </q-header>
+    <SongSection/>
   </q-page>
 </template>
 
