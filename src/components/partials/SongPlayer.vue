@@ -1,23 +1,24 @@
 <template>
-    <div class="bg-green-500 rounded">
-      <div id="aplayer"></div>
+  <div class="q-pa-md">
+    <div class="q-mb-md">
+      <div id="player-0"></div>
     </div>
-  </template>
-  
-  <script setup>
-  import { onMounted } from 'vue';
-  import APlayer from 'aplayer';
-  
-  import 'aplayer/dist/APlayer.min.css';
-  
-  onMounted(() => {
-    thePlayer();
-  });
-  
-  const thePlayer = () => {
-    new APlayer({
-      container: document.getElementById('aplayer'),
-      audio: [
+    <div class="q-mb-md">
+      <div id="player-1"></div>
+    </div>
+    <div class="q-mb-md">
+      <div id="player-2"></div>
+    </div>
+  </div>
+</template>
+
+<script>
+import APlayer from 'aplayer';
+
+export default {
+  data() {
+    return {
+      songs: [
         {
           name: 'Thats What I Like',
           artist: 'Bruno Mars',
@@ -31,13 +32,27 @@
           cover: '/pic/david.jpg',
         },
         {
-          name: 'Somene to stay',
+          name: 'Someone to Stay',
           artist: 'Vancouver Sleep Clinic',
           url: '/music/Someone-to-Stay.mp3',
           cover: '/pic/clinic.jpg',
         },
       ],
-    });
-  };
-  </script>
-  
+    };
+  },
+  mounted() {
+    this.playSong(this.songs[0], 'player-0');
+    this.playSong(this.songs[1], 'player-1');
+    this.playSong(this.songs[2], 'player-2');
+  },
+  methods: {
+    playSong(song, containerId) {
+      new APlayer({
+        container: document.getElementById(containerId),
+        audio: [song],
+      });
+    },
+  },
+};
+</script>
+
