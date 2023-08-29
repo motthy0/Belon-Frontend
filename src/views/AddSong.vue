@@ -1,157 +1,148 @@
-<!-- <template>
-    <q-page>
-      <q-container class="q-pa-md">
-        <div class="text-h6 text-weight-bold text-grey-8">Add Song</div>
-        <q-separator class="q-mb-4" color="green-5" />
-  
-        <TextInput
-          class="q-mb-6"
-          label="Title"
-          v-model="title"
-          input-type="text"
-          error="This is a test error"
-        />
-  
-        <q-input
-          class="q-mb-6"
-          v-model="selectedSound"
-          type="file"
-          @change="handleSoundUpload"
-        />
-  
-        <SubmitFormButton btn-text="Add Song" @submit="addSong" />
-      </q-container>
-    </q-page>
-  </template>
-  
-  <script setup>
-  import TextInput from "../components/global/TextInput.vue";
-  import SubmitFormButton from "../components/global/SubmitFormButton.vue";
-  import { ref } from 'vue';
-  import { useRouter } from "vue-router";
-  
-  const title = ref("");
-  const router = useRouter();
-  
-  const selectedSound = ref(null);
-  
-  const handleSoundUpload = (event) => {
-    selectedSound.value = event.target.files[0];
-  };
-  
-  const addSong = async () => {
-    if (!selectedSound.value) {
-      console.error("No sound selected");
-      return;
-    }
-  
-    const formData = new FormData();
-    formData.append("title", title.value);
-    formData.append("sound", selectedSound.value);
-  
-    try {
-      const response = await fetch("/api/add-song", {
-        method: "POST",
-        body: formData,
-      });
-  
-      if (response.ok) {
-        router.push("/");
-      } else {
-        console.error("Failed to add song:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Error adding song:", error);
-    }
-  };
-  </script>
-   -->
+<template>
+  <div>
+    <span class="title">Upload Song</span>
 
-   <template>
-    <q-page class="q-pa-md">
-      <div class="text-h6">Add Song</div>
-      <q-separator color="green-500" />
-      
-      <text-input
-        class="q-mb-md"
-        label="Title"
-        placeholder="Cool New Song"
-        v-model="title"
-        :error="errors.title ? errors.title[0] : ''"
-      />
-  
-      <div class="q-mb-md">
-        <label class="q-label">Select Image</label>
-        <q-input
-          outlined
-          type="file"
-          id="image"
-          ref="file"
-          @change="handleFileUpload"
-        />
-      </div>
-  
-      <submit-form-button
-        btn-text="Add Song"
-        @submit="addSong"
-      />
-  
-    </q-page>
-  </template>
-  
-  <script setup>
-  import { ref } from 'vue'
-  import TextInput from '../components/global/TextInput.vue'
-  import SubmitFormButton from '../components/global/SubmitFormButton.vue'
-  import Swal from '../sweetalert2.js'
-  import { useUserStore } from '../../src/store/user-store'
-  import { useSongStore } from '../../src/store/song-store'
-  import axios from 'axios'
-  import { useRouter } from 'vue-router'
-  
-  const { id: userId } = useUserStore()
-  const songStore = useSongStore()
-  const router = useRouter()
-  
-  let title = ref(null)
-  let song = ref(null)
-  let file = ref(null)
-  let errors = ref([])
-  
-  const handleFileUpload = () => {
-    song.value = file.value.files[0]
+    <form @submit.prevent="handleSubmit" enctype="multipart/form-data" class="form">
+      <fieldset :disabled="loading" class="field">
+        <label for="title">Title</label>
+        <input type="text" name="title" id="title" />
+      </fieldset>
+
+      <fieldset :disabled="loading" class="field">
+        <label for="song">Choose a Song</label>
+        <input v-on:change="handlePreviewSong" multiple="false" type="file" accept="audio/mpeg" name="song" id="song" />
+      </fieldset>
+
+      <span class="error" v-if="errorMessage">{{ errorMessage }}</span>
+
+      <button :disabled="loading" type="submit" class="btn">Save</button>
+      <button
+        :disabled="loading"
+        @click="
+          {
+            urlSongPreview = null;
+            errorMessage = null;
+          }
+        "
+        type="reset"
+        class="btn cancel"
+      >
+        Cancel
+      </button>
+    </form>
+
+    <audio class="audio" v-if="urlSongPreview" :src="urlSongPreview" controls></audio>
+  </div>
+</template>
+
+<script setup>
+import axios from 'axios';
+import { useRouter } from 'vue-router';
+import { ref } from 'vue';
+
+const router = useRouter();
+
+const loading = ref(false);
+const errorMessage = ref(null);
+const urlSongPreview = ref(null);
+
+async function handleSubmit(e) {
+  loading.value = true;
+
+  const title = e.currentTarget['title'].value;
+  const song = e.currentTarget['song'].files[0];
+  if (!title || !song) {
+    alert('title and song is required');
+    loading.value = false;
+    return;
   }
-  
-  const addSong = async () => {
-    if (!song.value) {
-      Swal.fire(
-        'Opps, something went wrong!',
-        'You forgot to upload the mp3 file!',
-        'warning'
-      )
-      return null
-    }
-  
-    try {
-      const form = new FormData()
-      form.append('user_id', userId)
-      form.append('title', title.value || '')
-      form.append('file', song.value)
-  
-      await axios.post('api/songs', form)
-  
-      songStore.fetchSongsByUserId(userId)
-  
-      setTimeout(() => {
-        router.push('/account/profile/' + userId)
-      }, 200)
-    } catch (err) {
-      errors.value = err.response.data.errors
-    }
+
+  const data = new FormData();
+  data.append('title', title);
+  data.append('song', song);
+
+  try {
+    const resp = await axios.post('http://localhost:8080/api/songs', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    console.log(resp.data);
+
+    loading.value = false;
+
+    // router.push('/profile');
+    return;
+  } catch (error) {
+    console.log(error.response.data);
+
+    errorMessage.value = error.response.data.error;
+    loading.value = false;
+
+    return;
   }
-  </script>
-  
-  <style scoped>
-  /* Gaya tampilan sesuai kebutuhan Anda */
-  </style>
-  
+}
+
+function handlePreviewSong(e) {
+  const songTemp = e.currentTarget.files[0];
+
+  const url = URL.createObjectURL(songTemp);
+  urlSongPreview.value = url;
+}
+</script>
+
+<style scoped>
+.title {
+  display: block;
+  font-size: 24px;
+  color: rgb(82, 82, 82);
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.error {
+  display: block;
+  margin-top: 10px;
+  margin-left: 5px;
+  color: rgb(216, 0, 0);
+  font-size: small;
+}
+
+.field {
+  border-radius: 5px;
+  margin-bottom: 10px;
+  border: 1px solid rgb(200, 200, 200);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  box-shadow: 4px 4px 5px rgb(178, 178, 178);
+}
+
+.btn {
+  margin-top: 10px;
+  margin-right: 5px;
+  border: none;
+  background-color: teal;
+  color: white;
+  font-size: 12px;
+  padding: 5px 20px;
+  border-radius: 5px;
+}
+
+.cancel {
+  background-color: rgb(193, 0, 0);
+  color: white;
+}
+
+.preview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.audio {
+  margin-top: 10px;
+  border: 1px solid rgb(200, 200, 200);
+  border-radius: 5px;
+}
+</style>

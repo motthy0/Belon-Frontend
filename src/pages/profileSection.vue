@@ -1,31 +1,18 @@
 <template>
-        <q-header elevated class="bg-teal">
-      <q-toolbar>
-        <q-toolbar-title>Profile</q-toolbar-title>
-      </q-toolbar>
-    </q-header>
-    <q-page class="q-pa-md full-background">
-      <div class="profile-section">
-        <div class="q-gutter-md q-flex">
+  <q-header elevated class="bg-teal">
+    <q-toolbar>
+      <q-toolbar-title>Profile</q-toolbar-title>
+    </q-toolbar>
+  </q-header>
+  <q-page class="q-pa-md full-background">
+    <div class="profile-section">
+      <div class="q-gutter-md q-flex">
         <div class="profile-picture-container">
-          <img
-            class="q-mb-md rounded-lg profile-picture"
-            :src="profilePicture"
-            alt="Profile Picture"
-          />
-          <input
-            type="file"
-            accept="image/*"
-            @change="updateProfilePicture"
-            v-if="isEditMode"
-            class="file-input"
-            id="profilePictureInput"
-          />
-          <label
-            for="profilePictureInput"
-            v-if="isEditMode"
-            class="file-input-label"
-          >
+          <img class="q-mb-md rounded-lg profile-picture" :src="profilePicture" alt="Profile Picture" />
+
+          <input type="file" accept="image/*" @change="updateProfilePicture" v-if="isEditMode" class="file-input"
+            id="profilePictureInput" />
+          <label for="profilePictureInput" v-if="isEditMode" class="file-input-label">
             Change Photo
           </label>
         </div>
@@ -34,13 +21,8 @@
         <div class="q-mb-md">
           <div class="q-row q-items-end">
             <div class="q-col text-right">
-              <q-btn
-                flat
-                dense
-                color="green"
-                @click="toggleEditMode"
-                :label="isEditMode ? 'Save Profile' : 'Edit Profile'"
-              />
+              <q-btn flat dense color="green" @click="toggleEditMode"
+                :label="isEditMode ? 'Save Profile' : 'Edit Profile'" />
             </div>
             <div class="q-col">
               <h1 class="text-h6 text-weight-bold text-primary q-mb-xs">
@@ -52,48 +34,38 @@
             </div>
           </div>
           <div v-if="isEditMode">
-            <q-input
-              outlined
-              dense
-              v-model="fullName"
-              label="Full Name"
-            />
-            <q-input
-              outlined
-              dense
-              v-model="location"
-              label="Location"
-            />
+            <q-input outlined dense v-model="fullName" label="Full Name" />
+            <q-input outlined dense v-model="location" label="Location" />
           </div>
         </div>
-        
-      <q-list class="q-mx-md">
-        <q-item clickable v-ripple>
-          <q-item-section avatar>
-            <q-avatar rounded color="primary" text-color="white" icon="account_box"/>
-          </q-item-section>
 
-          <q-item-section class="text-size">My Details</q-item-section>
+        <q-list class="q-mx-md">
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar rounded color="primary" text-color="white" icon="account_box" />
+            </q-item-section>
 
-          <q-item-section side>
-            <q-icon name="arrow_right" size="35px"/>
-          </q-item-section>
-        </q-item>
-    </q-list>
+            <q-item-section class="text-size">My Details</q-item-section>
 
-      <q-list class="q-mx-md">
-        <q-item clickable v-ripple>
-          <q-item-section avatar>
-            <q-avatar rounded color="red" text-color="white" icon="logout"/>
-          </q-item-section>
+            <q-item-section side>
+              <q-icon name="arrow_right" size="35px" />
+            </q-item-section>
+          </q-item>
+        </q-list>
 
-          <q-item-section class="text-size">Logout</q-item-section>
+        <q-list class="q-mx-md">
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar rounded color="red" text-color="white" icon="logout" />
+            </q-item-section>
 
-          <q-item-section side>
-            <q-icon name="arrow_right" size="35px"/>
-          </q-item-section>
-        </q-item>
-    </q-list>
+            <q-item-section class="text-size">Logout</q-item-section>
+
+            <q-item-section side>
+              <q-icon name="arrow_right" size="35px" />
+            </q-item-section>
+          </q-item>
+        </q-list>
 
       </div>
     </div>
@@ -104,17 +76,19 @@
 import { ref, onMounted } from 'vue';
 
 const profilePicture = ref('https://via.placeholder.com/300');
-const fullName = ref('John Doe'); 
-const location = ref('London, UK'); 
+const fullName = ref('John Doe');
+const location = ref('London, UK');
 
 const isEditMode = ref(false);
 
 const updateProfilePicture = (event) => {
   const file = event.target.files[0];
   if (file) {
-    profilePicture.value = URL.createObjectURL(file);
+    const imageUrl = URL.createObjectURL(file);
+    profilePicture.value = imageUrl;
   }
 };
+
 
 onMounted(() => {
   const FullNameStored = localStorage.getItem('fullName');
@@ -148,16 +122,17 @@ const toggleEditMode = () => {
 
 
 <style lang="scss" scoped>
-
-body{
-  margin:0;
-  padding:0;
+body {
+  margin: 0;
+  padding: 0;
 }
+
 .full-background {
   background-image: url(../../public/pic/home.jpg);
-  background-size: cover; 
-  background-position: center; 
+  background-size: cover;
+  background-position: center;
 }
+
 .profile-picture-container {
   width: 120px;
   height: 120px;
