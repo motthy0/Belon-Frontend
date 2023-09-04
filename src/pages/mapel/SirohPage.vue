@@ -1,8 +1,14 @@
 <template>
     <q-page>
       <q-header elevated class="bg-teal">
-      <q-toolbar>
+      <q-toolbar class="flex">
         <q-toolbar-title>Siroh</q-toolbar-title>
+        <q-btn 
+        to="mapel"
+        class="bg-grey"
+        >
+        back
+      </q-btn>
       </q-toolbar>
     </q-header><SongSection/>
     </q-page>

@@ -40,17 +40,17 @@
         </div>
 
         <q-list class="q-mx-md">
-          <q-item clickable v-ripple>
-            <q-item-section avatar>
+          <!-- <q-item clickable v-ripple> -->
+            <!-- <q-item-section avatar>
               <q-avatar rounded color="primary" text-color="white" icon="account_box" />
-            </q-item-section>
+            </q-item-section> -->
 
-            <q-item-section class="text-size">My Details</q-item-section>
+            <!-- <q-item-section class="text-size">My Details</q-item-section> -->
 
-            <q-item-section side>
+            <!-- <q-item-section side>
               <q-icon name="arrow_right" size="35px" />
-            </q-item-section>
-          </q-item>
+            </q-item-section> -->
+          <!-- </q-item> -->
         </q-list>
 
         <q-list class="q-mx-md">

@@ -1,148 +1,114 @@
 <template>
-  <div>
-    <span class="title">Upload Song</span>
+  <div id="AddSong" class="container mx-auto max-w-4xl pt-20 px-6">
+      
+      <div class="text-gray-900 text-xl">Add Song</div>
+      <div class="bg-green-500 w-full h-1 mb-4"></div>
 
-    <form @submit.prevent="handleSubmit" enctype="multipart/form-data" class="form">
-      <fieldset :disabled="loading" class="field">
-        <label for="title">Title</label>
-        <input type="text" name="title" id="title" />
-      </fieldset>
+      <TextInput 
+          class="mb-6"
+          label="Title"
+          placeholder="Cool New Song"
+          v-model:input="title"
+          inputType="text"
+          :error="errors.title ? errors.title[0] : ''"
+      />
 
-      <fieldset :disabled="loading" class="field">
-        <label for="song">Choose a Song</label>
-        <input v-on:change="handlePreviewSong" multiple="false" type="file" accept="audio/mpeg" name="song" id="song" />
-      </fieldset>
+      <div class="w-full">
+          <label
+              class="
+                  block
+                  uppercase
+                  tracking-wide
+                  text-gray-700
+                  text-xs
+                  font-bold
+                  mb-2
+              "
+          >
+              Select Image
+          </label>
+          <input
+              class="
+                  form-control
+                  block
+                  w-full
+                  px-3
+                  py-1.5
+                  text-base
+                  font-normal
+                  text-gray-700
+                  bg-white
+                  bg-clip-padding
+                  border
+                  border-solid
+                  border-gray-400
+                  rounded
+                  transition
+                  ease-in-out
+                  m-0
+                  focus:text-gray-700
+                  focus:bg-white
+                  focus:border-blue-600
+                  focus:outline-none
+              "
+              type="file"
+              id="image"
+              ref="file"
+              @change="handleFileUpload"
+          >
+      </div>
 
-      <span class="error" v-if="errorMessage">{{ errorMessage }}</span>
+      <SubmitFormButton
+          btnText="Add Song"
+          @submit="addSong"
+      />
 
-      <button :disabled="loading" type="submit" class="btn">Save</button>
-      <button
-        :disabled="loading"
-        @click="
-          {
-            urlSongPreview = null;
-            errorMessage = null;
-          }
-        "
-        type="reset"
-        class="btn cancel"
-      >
-        Cancel
-      </button>
-    </form>
-
-    <audio class="audio" v-if="urlSongPreview" :src="urlSongPreview" controls></audio>
   </div>
 </template>
 
 <script setup>
-import axios from 'axios';
-import { useRouter } from 'vue-router';
-import { ref } from 'vue';
+  import { ref } from 'vue';
+  import TextInput from '../components/global/TextInput.vue'
+  import SubmitFormButton from '../components/global/SubmitFormButton.vue'
+  import { useUserStore } from '../store/user-store';
+  import { useSongStore } from '../store/song-store'
+  import axios from 'axios';
+  import { useRouter } from 'vue-router'
 
-const router = useRouter();
+  const userStore = useUserStore()
+  const songStore = useSongStore()
+  const router = useRouter()
 
-const loading = ref(false);
-const errorMessage = ref(null);
-const urlSongPreview = ref(null);
+  let title = ref(null)
+  let song = ref(null)
+  let file = ref(null)
+  let errors = ref([])
 
-async function handleSubmit(e) {
-  loading.value = true;
-
-  const title = e.currentTarget['title'].value;
-  const song = e.currentTarget['song'].files[0];
-  if (!title || !song) {
-    alert('title and song is required');
-    loading.value = false;
-    return;
+  const handleFileUpload = () => {
+      song.value = file.value.files[0]
   }
 
-  const data = new FormData();
-  data.append('title', title);
-  data.append('song', song);
-
-  try {
-    const resp = await axios.post('http://localhost:8080/api/songs', data, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
+  const addSong = async () => {
+      if (!song.value) {
+          errors.value = { song: ['You forgot to upload the mp3 file!'] }
+          return null
       }
-    });
-    console.log(resp.data);
 
-    loading.value = false;
+      try {
+          let form = new FormData()
+          form.append('user_id', userStore.id)
+          form.append('title', title.value || '')
+          form.append('file', song.value)
 
-    // router.push('/profile');
-    return;
-  } catch (error) {
-    console.log(error.response.data);
+          await axios.post('http://localhost:8000/api/songs', form)
 
-    errorMessage.value = error.response.data.error;
-    loading.value = false;
+          songStore.fetchSongsByUserId(userStore.id)
 
-    return;
+          setTimeout(() => {
+              router.push('/account/profile/'+ userStore.id)
+          }, 200)
+      } catch (err) {
+          errors.value = err.response.data.errors
+      }
   }
-}
-
-function handlePreviewSong(e) {
-  const songTemp = e.currentTarget.files[0];
-
-  const url = URL.createObjectURL(songTemp);
-  urlSongPreview.value = url;
-}
 </script>
-
-<style scoped>
-.title {
-  display: block;
-  font-size: 24px;
-  color: rgb(82, 82, 82);
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.error {
-  display: block;
-  margin-top: 10px;
-  margin-left: 5px;
-  color: rgb(216, 0, 0);
-  font-size: small;
-}
-
-.field {
-  border-radius: 5px;
-  margin-bottom: 10px;
-  border: 1px solid rgb(200, 200, 200);
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  box-shadow: 4px 4px 5px rgb(178, 178, 178);
-}
-
-.btn {
-  margin-top: 10px;
-  margin-right: 5px;
-  border: none;
-  background-color: teal;
-  color: white;
-  font-size: 12px;
-  padding: 5px 20px;
-  border-radius: 5px;
-}
-
-.cancel {
-  background-color: rgb(193, 0, 0);
-  color: white;
-}
-
-.preview {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.audio {
-  margin-top: 10px;
-  border: 1px solid rgb(200, 200, 200);
-  border-radius: 5px;
-}
-</style>

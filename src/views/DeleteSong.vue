@@ -1,122 +1,58 @@
 <template>
-  <div>
-    <div class="refresh">
-      <span class="title">Delete Song</span>
-      <button @click="getSongs" class="btn-refresh">Refresh</button>
-    </div>
+  <div id="AddSong" class="container mx-auto max-w-4xl pt-20 px-6">
+      
+      <div class="text-gray-900 text-xl">Delete Song</div>
+      <div class="bg-red-500 w-full h-1 mb-4"></div>
 
-    <div class="songs-layout">
-      <template v-for="fileName in fileNames" :key="fileName">
-        <div class="song-field">
-          <div class="">
-            <p class="song-name">{{ fileName }}</p>
-            <audio class="audio" :src="`http://localhost:8080/${fileName}`" controls />
+      <div class="bg-white rounded px-8 pt-6 pb-8">
+          <div v-for="(song, index) in songStore.songs" :key="song" class="flex flex-wrap">
+
+              <div class="w-3/4 mr-auto mt-2 text-lg p-1 text-gray-900">
+                  {{ ++index }} {{ song.title }}
+              </div>
+
+              <div class="w-1/4 ml-auto p-1">
+                  <button
+                  @click="deleteSong(song)"
+                      class="
+                          float-right
+                          bg-transparent
+                          hover:bg-red-500
+                          text-gray-900
+                          font-semibold
+                          hover:text-white
+                          py-2
+                          px-4
+                          border
+                          border-red-500
+                          hover:border-transparent
+                          rounded
+                      "
+                  >
+                      Delete
+                  </button>
+              </div>
+
           </div>
-          <button @click="deleteSong(fileName)" class="btn">X</button>
-        </div>
-      </template>
-    </div>
+      </div>
+
   </div>
 </template>
 
 <script setup>
-import axios from 'axios';
-import { ref } from 'vue';
-const errorMessage = ref(null);
-const fileNames = ref([]);
+  import axios from 'axios'
+  import { useSongStore } from '../store/song-store'
+  import { useUserStore } from '../store/user-store'
 
-await getSongs();
+  const userStore = useUserStore()
+  const songStore = useSongStore()
 
-async function getSongs() {
-  try {
-    const resp = await axios.get('http://localhost:8080/api/songs');
-    console.log(resp.data.data);
-    fileNames.value = resp.data.data;
-  } catch (error) {
-    console.log(error.response.data.error);
+  const deleteSong = async (song) => {
+      try {
+          await axios.delete('localhost:8000/api/songs' + song.id + '/' + userStore.id)
+          songStore.fetchSongsByUserId(userStore.id)
+      } catch (err) {
+          console.log(err)
+      }
   }
-}
-
-async function deleteSong(name) {
-  // backend return upadated songs data
-  // so you dont need to fetch songs again after deleted a song
-  try {
-    const resp = await axios.delete(`http://localhost:8080/api/songs/${name}`);
-    console.log(resp.data.data);
-    fileNames.value = resp.data.data;
-  } catch (error) {
-    console.log(error.response.data.error);
-  }
-}
 </script>
-
-<style scoped>
-.title {
-  display: block;
-  font-size: 24px;
-  color: rgb(82, 82, 82);
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.songs-layout {
-  max-width: 640px;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.refresh {
-  display: flex;
-  align-items: center;
-  justify-items: center;
-  gap: 0px 10px;
-  margin-bottom: 20px;
-}
-
-.song-field {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.song-name {
-  font-weight: bold;
-  color: rgb(58, 58, 58);
-  margin-bottom: -5px;
-}
-
-.btn-refresh {
-  display: block;
-  border: none;
-  background-color: rgb(8, 170, 0);
-  color: white;
-  font-size: 12px;
-  padding: 5px;
-  border-radius: 5px;
-}
-
-.btn {
-  display: block;
-  border: none;
-  background-color: rgb(187, 0, 0);
-  color: white;
-  font-size: 12px;
-  padding: 10px;
-  border-radius: 5px;
-}
-
-.preview {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.audio {
-  margin-top: 10px;
-  border: 1px solid rgb(200, 200, 200);
-  border-radius: 5px;
-}
-</style>

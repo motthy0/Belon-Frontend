@@ -75,6 +75,10 @@ const routes = [
          component: () => import("../views/DeleteSong.vue")
       },
       {
+         path: "/tes",
+         component: () => import("../views/PageSong.vue")
+      },
+      {
          path: "/song",
          component: () => import("../components/partials/SongSection.vue")
       },
