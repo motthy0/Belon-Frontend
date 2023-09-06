@@ -1,45 +1,48 @@
 <template>
   <div>
-    <q-container class="q-py-4">
-      <div class="q-flex q-justify-between q-items-center">
-        <div class="text-h6 text-weight-bold text-grey-8">Songs</div>
+      <div class="mx-auto py-4">
+          <div class="flex flex-wrap font-bold text-gray-100">
+
+              <div class="text-gray-900 text-xl">Songs</div>
+              <div class="bg-green-500 w-full h-1"></div>
+
+              <div class="w-full mt-4" v-if="userStore.id == route.params.id">
+                  <RouterLinkButton
+                      class="ml-2"
+                      btnText="Delete Song"
+                      color="red"
+                      url="delete"
+                  />
+                  <RouterLinkButton
+                      btnText="Add Song"
+                      color="green"
+                      url="add"
+                  />
+              </div>
+          </div>
       </div>
-    </q-container>
 
-    <q-separator class="q-mt-4 " color="green-5"  style="margin-bottom: 10px;"/>
-
-    <q-container class="q-mt-md">
-      <q-btn
-        class="q-ml-auto q-mb-2"
-        color="red"
-        label="Delete Song"
-        @click="$router.push('/delete')"
-         style="
-         margin-right: 5px;
-         margin-bottom: 5px;
-         "
-      />
-      <q-btn
-        class="q-mb-2"
-        label="Add Song"
-        color="green"
-        @click="$router.push('/add')"
-        style="
-        margin-left: 5px;
-        margin-bottom: 5px;
-        "
-      />
-    </q-container>
-
-    <div class="q-pb-4">
-      <SongPlayer />
-    </div>
+      <div class="pb-4">
+          <SongPlayer />
+      </div>
   </div>
 </template>
 
 <script setup>
-import SongPlayer from "./SongPlayer.vue";
-import "aplayer/dist/APlayer.min.css";
+  import SongPlayer from './SongPlayer.vue'
+  import RouterLinkButton from '../partials/RouterLinkButton.vue'
 
+  import { useUserStore } from '../../store/user-store'
+  import { useRoute } from 'vue-router'
 
+  import { onMounted } from 'vue'
+  import { useSongStore } from '../../store/song-store'
+  const songStore = useSongStore()
+
+  const route = useRoute()
+  const userStore = useUserStore()
+
+  onMounted(async () => {
+      await songStore.fetchSongsByUserId(route.params.id)
+  })
 </script>

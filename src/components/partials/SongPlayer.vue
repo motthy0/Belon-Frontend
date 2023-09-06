@@ -1,58 +1,43 @@
 <template>
-  <div class="q-pa-md">
-    <div class="q-mb-md">
-      <div id="player-0"></div>
-    </div>
-    <div class="q-mb-md">
-      <div id="player-1"></div>
-    </div>
-    <div class="q-mb-md">
-      <div id="player-2"></div>
-    </div>
+  <div class="bg-green-500 rounded">
+      <div id="aplayer"></div>
   </div>
 </template>
 
-<script>
-import APlayer from 'aplayer';
+<script setup>
+  import { onMounted } from 'vue'
+  import APlayer from 'aplayer'
+  import 'aplayer/dist/APlayer.min.css';
+  import { useSongStore } from '../../store/song-store'
 
-export default {
-  data() {
-    return {
-      songs: [
-        {
-          name: 'Thats What I Like',
-          artist: 'Bruno Mars',
-          url: '/music/Bruno-Mars.mp3',
-          cover: '/pic/bruno.jpg',
-        },
-        {
-          name: 'Daylight',
-          artist: 'David Kushner',
-          url: '/music/Daylight.mp3',
-          cover: '/pic/david.jpg',
-        },
-        {
-          name: 'Someone to Stay',
-          artist: 'Vancouver Sleep Clinic',
-          url: '/music/Someone-to-Stay.mp3',
-          cover: '/pic/clinic.jpg',
-        },
-      ],
-    };
-  },
-  mounted() {
-    this.playSong(this.songs[0], 'player-0');
-    this.playSong(this.songs[1], 'player-1');
-    this.playSong(this.songs[2], 'player-2');
-  },
-  methods: {
-    playSong(song, containerId) {
+  const songStore = useSongStore()
+
+  let songsList = []
+
+  onMounted(() => { 
+      setTimeout(() => { mapSongs() }, 500)
+  })
+
+  const mapSongs = () => {
+      let newSongs = songStore.songs.map(function (song) {
+          return {
+              name: song.title,
+              artist: songStore.artistName,
+              url: process.env.VUE_APP_API_URL + 'songs/' + songStore.artistId + '/' + song.song
+          }
+      })
+
+      for (let i = 0; i < newSongs.length; i++) {
+          songsList.push(newSongs[i])
+      }
+
+      thePlayer()
+  }
+
+  const thePlayer = () => {
       new APlayer({
-        container: document.getElementById(containerId),
-        audio: [song],
+          container: document.getElementById('aplayer'),
+          audio: songsList
       });
-    },
-  },
-};
+  }
 </script>
-

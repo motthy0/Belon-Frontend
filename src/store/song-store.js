@@ -9,7 +9,7 @@ export const useSongStore = defineStore('song', {
   }),
   actions: {
     async fetchSongsByUserId(userId) {
-        let res = await axios.get('api/user/' + userId + '/songs')
+        let res = await axios.get('http://localhost:8000/api/user/' + userId + '/songs')
         this.$state.artistId = res.data.artist_id
         this.$state.artistName = res.data.artist_name
         if (res.data.songs) {

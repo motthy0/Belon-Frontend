@@ -8,14 +8,14 @@
     <div class="profile-section">
       <div class="q-gutter-md q-flex">
         <div class="profile-picture-container">
-          <img class="q-mb-md rounded-lg profile-picture" :src="profilePicture" alt="Profile Picture" />
+  <img class="q-mb-md rounded-lg profile-picture" :src="profilePicture" alt="Profile Picture" />
 
-          <input type="file" accept="image/*" @change="updateProfilePicture" v-if="isEditMode" class="file-input"
-            id="profilePictureInput" />
-          <label for="profilePictureInput" v-if="isEditMode" class="file-input-label">
-            Change Photo
-          </label>
-        </div>
+  <input type="file" accept="image/*" @change="updateProfilePicture" v-if="isEditMode" class="file-input" id="profilePictureInput" />
+  <label for="profilePictureInput" v-if="isEditMode" class="file-input-label">
+    Change Photo
+  </label>
+</div>
+
       </div>
       <div class="q-col-6 q-flex q-flex-column q-justify-between">
         <div class="q-mb-md">
@@ -40,17 +40,6 @@
         </div>
 
         <q-list class="q-mx-md">
-          <!-- <q-item clickable v-ripple> -->
-            <!-- <q-item-section avatar>
-              <q-avatar rounded color="primary" text-color="white" icon="account_box" />
-            </q-item-section> -->
-
-            <!-- <q-item-section class="text-size">My Details</q-item-section> -->
-
-            <!-- <q-item-section side>
-              <q-icon name="arrow_right" size="35px" />
-            </q-item-section> -->
-          <!-- </q-item> -->
         </q-list>
 
         <q-list class="q-mx-md">
@@ -86,8 +75,13 @@ const updateProfilePicture = (event) => {
   if (file) {
     const imageUrl = URL.createObjectURL(file);
     profilePicture.value = imageUrl;
+
+    // Simpan gambar di localStorage jika diperlukan
+    localStorage.setItem('profilePicture', imageUrl);
   }
 };
+
+
 
 
 onMounted(() => {

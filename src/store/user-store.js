@@ -25,7 +25,7 @@ export const useUserStore = defineStore('user', {
     },
 
     async fetchUser() {
-        let res = await axios.get('api/users/' + this.$state.id)
+        let res = await axios.get('http://localhost:8000/api/users/' + this.$state.id)
 
         this.$state.id = res.data.user.id
         this.$state.firstName = res.data.user.first_name
