@@ -41,7 +41,7 @@
 
 <script setup>
     import axios from 'axios'
-    import Swal from '../../sweetalert2'
+    // import Swal from '../../sweetalert2'
     import { useSongStore } from '../../store/song-store'
     import { useUserStore } from '../../store/user-store'
 
